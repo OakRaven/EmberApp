@@ -1,0 +1,48 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Exermatic</title>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ember.js/1.7.0/ember.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ember-data.js/1.0.0-beta.15/ember-data.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ember-localstorage-adapter/0.3.1/localstorage_adapter.min.js"></script>
+
+  <script src="js/application.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+  <script type="text/x-handlebars">
+    <h1>Exermatic</h1> {{outlet}}
+  </script>
+  
+  <script type="text/x-handlebars" data-template-name="walks">
+    {{#link-to "walks.add"}}Add Walk{{/link-to}}
+    {{#if content.length}}
+      <p>There are some walks.</p>
+    {{else}}
+      <p>There are no walks.</p>
+    {{/if}}
+    {{outlet}}
+  </script>
+  
+  <script type="text/x-handlebars" data-template-name="walks/add">
+    {{#if error }}
+    <p>{{error}}</p>
+    {{/if}}
+    {{input type="text" id="dateWalked" value=dateWalked placeholder="YYYY-MM-DD HH:mm"}}
+    {{input type="text" id="distanceWalked" value=distanceWalked placeholder="Distance Walked"}}
+    {{input type="text" id="minutesTaken" value=minutesTaken placeholder="Time Taken"}}
+    {{input type="text" id="mood" value=mood placeholder="Good / OK / Bad"}}
+    <button id="add-button" {{action "addWalk"}}>Add</button>
+  </script>
+</body>
+
+</html>
