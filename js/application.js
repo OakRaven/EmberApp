@@ -1,4 +1,6 @@
-var App = Ember.Application.create();
+var App = Ember.Application.create({
+  debug: true
+});
 
 App.ApplicationAdapter = DS.LSAdapter.extend({
   namespace: 'exermatic-data'
@@ -7,15 +9,21 @@ App.ApplicationAdapter = DS.LSAdapter.extend({
 App.Walk = DS.Model.extend({
   dateWalked: DS.attr('date'),
   distanceWalked: DS.attr('number'),
-  minustesTaken: DS.attr('number'),
-  mood: DS.attr('string')
+  minutesTaken: DS.attr('number'),
+  mood: DS.attr('string'),
+
+  kmPerHour: function () {
+    return 60 * this.get('distanceWalked') / this.get('minutesTaken');
+  }.property('distanceWalked', 'minutesTaken')
 });
 
 App.Router.map(function () {
   this.resource('walks', function () {
-    this.route('add');
     this.route('walk', {
-      path: '/:id'
+      path: '/:walk_id'
+    });
+    this.route('add', {
+      path: 'add'
     });
   });
 });
@@ -32,36 +40,41 @@ App.WalksRoute = Ember.Route.extend({
   }
 });
 
-App.WalksAddRoute = Ember.Route.extend({
-  model: function () {
-    return this.store.createRecord('walk');
-  },
-  deactivate: function () {
-    var walk = this.controllerFor('walks.add').get('content');
+App.WalksAddController = Ember.Controller.extend({
+  error: "",
 
-    if (walk.get('isDirty')) {
-      walk.deleteRecord();
-    }
-  }
-});
-
-App.WalksAddController = Ember.ObjectController.extend({
-  error: '',
   actions: {
     addWalk: function () {
-      var walk = this.get('content');
-      if (typeof walk.get('dateWalked') === 'undefined' ||
-        typeof walk.get('distanceWalked') === 'undefined' ||
-        typeof walk.get('minutesTaken') === 'undefined' ||
-        typeof walk.get('mood') === 'undefined') {
-        this.set('error', 'Please populate all the fields.');
+      var newDate = this.get('newDate'),
+        newDistance = this.get('newDistance'),
+        newTime = this.get('newTime'),
+        newMood = this.get('newMood');
+
+      if (typeof newDate === 'undefined' ||
+        typeof newDistance === 'undefined' ||
+        typeof newTime === 'undefined' ||
+        typeof newMood === 'undefined') {
+        this.set('error', 'Please populate all the fields');
         return;
       }
 
-      walk.set('dateWalked', new Date(walk.get('dateWalked')));
-
       this.set('error', '');
-      this.transitionToRoute('walks.walk', walk);
+
+      walk = this.store.createRecord('walk', {
+        dateWalked: new Date(newDate),
+        distanceWalked: newDistance,
+        minutesTaken: newTime,
+        mood: newMood
+      });
+
+      walk.save();
+
+      this.set('newDate', '');
+      this.set('newDistance', '');
+      this.set('newTime', '');
+      this.set('newMood', '');
+
+      this.transitionTo('walks.walk', walk);
     }
   }
 });
