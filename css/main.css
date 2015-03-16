@@ -103,3 +103,11 @@ body {
   font-weight: bold;
   margin: 1em 0;
 }
+
+.is-good {
+  color: green;
+}
+
+.is-not-good {
+  color: red;
+}

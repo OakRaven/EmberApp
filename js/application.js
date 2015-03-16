@@ -14,7 +14,28 @@ App.Walk = DS.Model.extend({
 
   kmPerHour: function () {
     return 60 * this.get('distanceWalked') / this.get('minutesTaken');
-  }.property('distanceWalked', 'minutesTaken')
+  }.property('distanceWalked', 'minutesTaken'),
+
+  moodImage: function () {
+    var mood = this.get('mood');
+    switch(mood.toLowerCase()){
+        case 'good':
+        return 'img/good.png';
+        break;
+        case 'ok':
+        return 'img/ok.png';
+        break;
+        case 'bad':
+        return 'img/bad.png';
+        break;
+        default:
+        return 'img/unkown.png';
+    }
+  }.property('mood'),
+
+  isGood: function () {
+    return this.get('mood').toLowerCase() === 'good';
+  }.property('mood')
 });
 
 App.Router.map(function () {
@@ -77,4 +98,12 @@ App.WalksAddController = Ember.Controller.extend({
       this.transitionTo('walks.walk', walk);
     }
   }
+});
+
+Ember.Handlebars.registerBoundHelper('humanDate', function (input) {
+  return moment(input).fromNow();
+});
+
+Ember.Handlebars.registerBoundHelper('twoDecimalPlaces', function (input) {
+  return input.toFixed(2);
 });

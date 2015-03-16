@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/main.css">
 
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/ember.js/1.6.1/ember.min.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/ember-data.js/1.0.0-beta.8/ember-data.min.js"></script>
@@ -39,8 +40,8 @@
       <ul class="walk-list">
         {{#each content}}
         <li class="walk-header">
-          {{#link-to "walks.walk" this}}Walk {{this.id}}{{/link-to}}
-          <span>On {{this.dateWalked}}</span>
+          {{#link-to "walks.walk" this}}Walk {{humanDate this.dateWalked}}{{/link-to}}
+          <span>{{this.distanceWalked}}km @ {{twoDecimalPlaces this.kmPerHour}}kph</span>
         </li>
         {{/each}}
       </ul>
@@ -82,11 +83,15 @@
 
     <ul class="walk-details">
       <li><span>Walk</span> {{id}}</li>
-      <li><span>Date Walked</span> {{dateWalked}}</li>
+      <li><span>Date Walked</span> {{humanDate dateWalked}}</li>
       <li><span>Distance Walked</span> {{distanceWalked}}</li>
       <li><span>Time Taken</span> {{minutesTaken}}</li>
-      <li><span>Mood</span> {{mood}}</li>
-      <li><span>Speed</span> {{kmPerHour}}kph</li>
+      <li>
+        <span>Mood</span>
+        <img {{bind-attr src=moodImage}} width="48" height="48" title="Mood" />
+        <div {{bind-attr class=":mood isGood:is-good:is-not-good"}}>{{mood}}</div>
+      </li>
+      <li><span>Speed</span> {{twoDecimalPlaces kmPerHour}} kph</li>
     </ul>
   </script>
 </body>
