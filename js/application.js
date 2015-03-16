@@ -40,13 +40,10 @@ App.Walk = DS.Model.extend({
 
 App.Router.map(function () {
   this.resource('walks', function () {
-    this.route('walk', {
-      path: '/:walk_id'
-    });
-    this.route('add', {
-      path: 'add'
-    });
+    this.route('walk', {      path: '/:walk_id'    });
+    this.route('add', {      path: 'add'    });
   });
+  this.route('summary');
 });
 
 App.IndexRoute = Ember.Route.extend({
@@ -100,10 +97,45 @@ App.WalksAddController = Ember.Controller.extend({
   }
 });
 
+App.SummaryRoute = Ember.Route.extend({
+  model: function () {
+    return this.store.find('walk');
+  }
+});
+
+App.SummaryController = Ember.ArrayController.extend({
+
+    averageSpeed: function (data) {
+        var length = data.get('length'),
+            sum = 0;
+
+        return (data.reduce(function(previous, item) {
+            return previous + item.get('kmPerHour');
+        }, sum) / length);
+    },
+
+    proportionGood: function () {
+        var content = this.get('content'),
+            allCount = content.get('length'),
+            goodCount = content.filterBy('isGood', true).get('length');
+        return (100 * goodCount / allCount).toFixed(0) + "%";
+    }.property('content.@each.mood'),
+
+    averageGood: function () {
+        var data = this.get('content').filterBy('isGood', true);
+        return this.averageSpeed(data);
+    }.property('content.@each.kmPerHour'),
+
+    averageAll: function () {
+        var data = this.get('content');
+        return this.averageSpeed(data);
+    }.property('content.@each.kmPerHour')
+});
+
 Ember.Handlebars.registerBoundHelper('humanDate', function (input) {
   return moment(input).fromNow();
 });
 
 Ember.Handlebars.registerBoundHelper('twoDecimalPlaces', function (input) {
-  return input.toFixed(2);
+  return parseFloat(input, 10).toFixed(2);
 });
