@@ -73,9 +73,9 @@
       {{input type="text" id="new-time" value=newTime placeholder="Time Taken"}}
 
       <label for="new-mood">Mood When Walking</label>
-      {{input type="text" id="new-mood" value=newMood placeholder="Good / OK / Bad"}}
+      {{mood-picker value=newMood}}
 
-      <button {{action "addWalk"}}>Add</button>
+      <button id="add-button" {{action "addWalk"}}>Add</button>
     </div>
   </script>
 
@@ -113,6 +113,12 @@
       <span>{{twoDecimalPlaces averageGood}}</span>
       GOOD SPEED (KPH)
     </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="components/mood-picker">
+    <button {{action 'setMood' 'good'}} {{bind-attr class=":mood-button isGood:selected"}}>good</button>
+    <button {{action 'setMood' 'ok'}} {{bind-attr class=":mood-button isOk:selected"}}>ok</button>
+    <button {{action 'setMood' 'bad'}} {{bind-attr class=":mood-button isBad:selected"}}>bad</button>
   </script>
 </body>
 
